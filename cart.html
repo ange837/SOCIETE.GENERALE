@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cartes Bancaires – Caisse d'Épargne</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  
+  <style>
+/* ================= RESET ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background: #f2f2f2;
+  color: #111;
+  padding-bottom: 130px;
+}
+
+/* ================= HEADER ================= */
+.welcome {
+  text-align: center;
+  padding: 12px 16px 6px;
+}
+
+.welcome h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* ================= LOGOUT ================= */
+.logout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  margin-bottom: 12px;
+}
+
+.logout i {
+  color: #e60028;
+  font-size: 14px;
+}
+
+.logout a {
+  color: #e60028;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* ================= CARD CONTAINER ================= */
+.card_container {
+  max-width: 420px;
+  margin: 20px auto;
+  padding: 0 16px;
+  perspective: 1000px;
+}
+
+.card {
+  width: 100%;
+  height: 220px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.flip-card-front {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.flip-card-back {
+  background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* FRONT CARD */
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.bank-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.logo-icon {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+  background: #fff;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.geometric-deco {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,237,78,0.1));
+  border-radius: 8px;
+  transform: rotate(45deg);
+}
+
+.middle-row {
+  display: flex;
+  align-items: center;
+}
+
+.chip-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chip {
+  width: 45px;
+  height: 35px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.wifi-icon {
+  width: 24px;
+  height: 24px;
+  color: rgba(255,255,255,0.7);
+}
+
+.bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.holder-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-type {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: rgba(255,255,255,0.7);
+}
+
+.card-name {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.visa-logo {
+  font-size: 28px;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 2px;
+  color: #fff;
+}
+
+/* BACK CARD */
+.mag-stripe {
+  width: 100%;
+  height: 50px;
+  background: #000;
+  margin-top: 20px;
+}
+
+.signature-area {
+  background: #fff;
+  height: 40px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 10px;
+  margin-top: auto;
+}
+
+.cvv-box {
+  background: #fff;
+  color: #000;
+  padding: 5px 15px;
+  border-radius: 4px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  border: 1px dashed #999;
+}
+
+/* ================= SETTINGS ================= */
+.settings_card {
+  max-width: 420px;
+  margin: 20px auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.back_white {
+  background: #fff;
+  padding: 16px;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.icon_card {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  border-radius: 10px;
+  color: #e60028;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.icon_card img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.text_card {
+  flex: 1;
+}
+
+.text_card p:first-child {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.text_card p:last-child {
+  font-size: 12px;
+  color: #666;
+}
+
+/* ================= TOGGLE ================= */
+.toggle {
+  flex-shrink: 0;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 26px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #138a3d;
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+/* ================= TITLE ================= */
+.title {
+  text-align: center;
+  margin: 20px 0 12px;
+}
+
+.title h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ================= GESTIONNAIRE ================= */
+.gestionnaire {
+  max-width: 420px;
+  margin: 0 auto 20px;
+  padding: 0 16px;
+}
+
+/* ================= NAVIGATION BAR ================= */
+.navigation_bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #111;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 10px 0;
+  z-index: 1000;
+}
+
+.navigation {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.navigation ul {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+
+.navigation .list {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+.navigation .list a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  color: #aaa;
+  font-size: 11px;
+  transition: color 0.25s ease;
+  padding: 8px 0;
+}
+
+.navigation .list i {
+  font-size: 24px;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.navigation .list span {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.navigation .list.active a {
+  color: #e60028;
+}
+
+.navigation .list.active i {
+  color: #e60028;
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* INDICATOR */
+.indicator {
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 20%;
+  height: 3px;
+  background: #e60028;
+  border-radius: 10px;
+  transition: left 0.35s cubic-bezier(.4,0,.2,1);
+}
+
+.navigation .list:nth-child(1).active ~ .indicator {
+  left: 0;
+}
+
+.navigation .list:nth-child(2).active ~ .indicator {
+  left: 20%;
+}
+
+.navigation .list:nth-child(3).active ~ .indicator {
+  left: 40%;
+}
+
+.navigation .list:nth-child(4).active ~ .indicator {
+  left: 60%;
+}
+
+.navigation .list:nth-child(5).active ~ .indicator {
+  left: 80%;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 400px) {
+  .card {
+    height: 200px;
+  }
+  
+  .navigation .list span {
+    font-size: 10px;
+  }
+  
+  .navigation .list i {
+    font-size: 22px;
+  }
+}
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="welcome">
+    <h4>Cartes</h4>
+    <div class="logout">
+      <i class="fas fa-power-off"></i>
+      <a href="index.html">Déconnexion</a>
+    </div>
+  </div>
+
+  <!-- CARTE BLACK -->
+  <div class="card_container">
+    <div class="card">
+      
+      <div class="flip-card-front">
+        <div class="top-row">
+          <div class="bank-logo">
+            <img src="2400x2400.png" alt="Bank Logo" class="logo-icon">
+            <span>SOCIÉTÉ GÉNÉRALE</span>
+          </div>
+          <div class="geometric-deco"></div>
+        </div>
+
+        <div class="middle-row">
+          <div class="chip-group">
+            <svg class="wifi-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M3.5,12L4.91,13.41C7.45,10.87 11.08,10.37 14,11.89L15.42,10.47C11.72,8.4 7.04,9.03 3.5,12M1,9.5L2.41,10.91C6.05,7.27 11.39,6.41 15.82,8.33L17.23,6.92C12.03,4.35 5.64,5.29 1,9.5M12,18A2,2 0 0,1 10,16A2,2 0 0,1 12,14A2,2 0 0,1 14,16A2,2 0 0,1 12,18Z" /></svg>
+            <img src="pu.jpg" alt="Chip" class="chip">
+          </div>
+        </div>
+
+        <div class="bottom-row">
+          <div class="holder-info">
+            <span class="card-type">WORLD ELITE</span>
+            <span class="card-name">M. CAMILLE WEEMANS</span>
+          </div>
+          <div class="visa-logo">VISA</div>
+        </div>
+      </div>
+
+      <div class="flip-card-back">
+        <div class="mag-stripe"></div>
+        <div class="signature-area">
+          <div class="cvv-box">529</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PARAMÈTRES CARTE -->
+  <div class="settings_card">
+    <div class="back_white">
+      <div class="icon_card"><i class="fa fa-unlock-alt"></i></div>
+      <div class="text_card">
+        <p>Verrouiller la carte</p>
+        <p>Bloquez temporairement</p>
+      </div>
+      <div class="toggle">
+        <label class="switch">
+          <input type="checkbox"/>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="back_white">
+      <div class="icon_card"><i class="fab fa-apple-pay"></i></div>
+      <div class="text_card">
+        <p>Activer Apple Pay</p>
+        <p>Autoriser liaison Apple Pay</p>
+      </div>
+      <div class="toggle">
+        <label class="switch">
+          <input type="checkbox"/>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="back_white">
+      <div class="icon_card"><span class="material-icons">nfc</span></div>
+      <div class="text_card">
+        <p>Activer NFC</p>
+        <p>Paiement sans contact</p>
+      </div>
+      <div class="toggle">
+        <label class="switch">
+          <input type="checkbox"/>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- GESTIONNAIRE -->
+  <div class="title">
+    <h2><i class="fas fa-user-tie"></i> Votre gestionnaire</h2>
+  </div>
+  <div class="gestionnaire">
+    <div class="back_white">
+      <div class="icon_card">
+        <img src="gest.jpg" alt="Gestionnaire">
+      </div>
+      <div class="text_card">
+        <p>M. Martin Greenberg</p>
+        <p>Conseiller personnel</p>
+      </div>
+      <div class="icon_card">
+        <i class="fas fa-phone"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <div class="navigation_bar">
+    <div class="navigation">
+      <ul>
+        <li class="list">
+          <a href="inter.html">
+            <i class="fas fa-wallet"></i>
+            <span>Solde</span>
+          </a>
+        </li>
+        <li class="list">
+          <a href="histo.html">
+            <i class="fas fa-clock"></i>
+            <span>Historique</span>
+          </a>
+        </li>
+        <li class="list">
+          <a href="vir.html">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Virement</span>
+          </a>
+        </li>
+        <li class="list active">
+          <a href="cart.html">
+            <i class="fas fa-credit-card"></i>
+            <span>Cartes</span>
+          </a>
+        </li>
+        <li class="list">
+          <a href="rib.html">
+            <i class="fas fa-file-alt"></i>
+            <span>RIB</span>
+          </a>
+        </li>
+        <div class="indicator"></div>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script>
+    // Navigation active state
+    const lists = document.querySelectorAll('.navigation .list');
+    lists.forEach((list, index) => {
+      list.addEventListener('click', function() {
+        lists.forEach(item => item.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

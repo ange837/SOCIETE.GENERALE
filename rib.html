@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RIB BNP Paribas</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <style>
+/* ================= RESET ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background: #f2f2f2;
+  color: #111;
+  padding-bottom: 130px;
+  padding-top: 20px;
+}
+
+/* ================= RIB WRAPPER ================= */
+.rib-wrapper {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* ================= RIB HEADER ================= */
+.rib-header {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px 14px 0 0;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.rib-header img {
+  height: 50px;
+  width: auto;
+}
+
+.rib-header-text h1 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e60028;
+  margin-bottom: 4px;
+}
+
+.rib-header-text p {
+  font-size: 12px;
+  color: #666;
+}
+
+/* ================= RIB SECTION ================= */
+.rib-section {
+  background: #fff;
+  padding: 20px;
+  margin-top: 2px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.rib-section:last-of-type {
+  border-radius: 0 0 14px 14px;
+  margin-bottom: 16px;
+}
+
+.rib-section h2 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #e60028;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e60028;
+}
+
+/* ================= RIB LINE ================= */
+.rib-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.rib-line:last-child {
+  border-bottom: none;
+}
+
+.rib-line span {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.rib-line p {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+  text-align: right;
+}
+
+#iban, #bic {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+}
+
+/* ================= NAVIGATION BAR ================= */
+.navigation_bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #111;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 10px 0;
+  z-index: 1000;
+}
+
+.navigation {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.navigation ul {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+
+.navigation .list {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+.navigation .list a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  color: #aaa;
+  font-size: 11px;
+  transition: color 0.25s ease;
+  padding: 8px 0;
+}
+
+.navigation .list i {
+  font-size: 24px;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.navigation .list span {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.navigation .list.active a {
+  color: #e60028;
+}
+
+.navigation .list.active i {
+  color: #e60028;
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* INDICATOR */
+.indicator {
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 20%;
+  height: 3px;
+  background: #e60028;
+  border-radius: 10px;
+  transition: left 0.35s cubic-bezier(.4,0,.2,1);
+}
+
+.navigation .list:nth-child(1).active ~ .indicator {
+  left: 0;
+}
+
+.navigation .list:nth-child(2).active ~ .indicator {
+  left: 20%;
+}
+
+.navigation .list:nth-child(3).active ~ .indicator {
+  left: 40%;
+}
+
+.navigation .list:nth-child(4).active ~ .indicator {
+  left: 60%;
+}
+
+.navigation .list:nth-child(5).active ~ .indicator {
+  left: 80%;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 400px) {
+  .rib-header {
+    padding: 16px;
+  }
+  
+  .rib-section {
+    padding: 16px;
+  }
+  
+  .navigation .list span {
+    font-size: 10px;
+  }
+  
+  .navigation .list i {
+    font-size: 22px;
+  }
+}
+  </style>
+</head>
+
+<body>
+
+<div class="rib-wrapper">
+
+    <div class="rib-header">
+        <img src="2400x2400.png" alt="SOCIÉTÉ GÉNÉRALE Logo">
+        <div class="rib-header-text">
+            <h1>Relevé d'Identité Bancaire</h1>
+            <p>Document officiel — SOCIÉTÉ GÉNÉRALE</p>
+        </div>
+    </div>
+
+    <div class="rib-section">
+        <h2>Identifiant national (RIB)</h2>
+
+        <div class="rib-line"><span>Établissement</span><p>20042</p></div>
+        <div class="rib-line"><span>Guichet</span><p>01005</p></div>
+        <div class="rib-line"><span>N° de compte</span><p>1277561S025</p></div>
+        <div class="rib-line"><span>Clé RIB</span><p>21</p></div>
+        <div class="rib-line"><span>Domiciliation</span><p>SOCIÉTÉ GÉNÉRALE</p></div>
+    </div>
+
+    <div class="rib-section">
+        <h2>Identifiant international</h2>
+
+        <div class="rib-line"><span>IBAN</span><p id="iban">BE32 7341 0429 3703</p></div>
+        <div class="rib-line"><span>BIC</span><p id="bic">KREDBEBBXXX</p></div>
+    </div>
+
+    <div class="rib-section">
+        <h2>Votre gestionnaire</h2>
+
+        <div class="rib-line"><span>Nom</span><p>M. Martin Greenberg</p></div>
+        <div class="rib-line"><span>Téléphone</span><p>+32460646477</p></div>
+    </div>
+
+</div>
+  
+  <div class="navigation_bar">
+    <div class="navigation">
+      <ul>
+        <li class="list">
+          <a href="inter.html">
+            <i class="fas fa-wallet"></i>
+            <span>Solde</span>
+          </a>
+        </li>
+        <li class="list">
+          <a href="histo.html">
+            <i class="fas fa-clock"></i>
+            <span>Historique</span>
+          </a>
+        </li>
+        <li class="list">
+          <a href="vir.html">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Virement</span>
+          </a>
+        </li>
+        <li class="list">
+          <a href="cart.html">
+            <i class="fas fa-credit-card"></i>
+            <span>Cartes</span>
+          </a>
+        </li>
+        <li class="list active">
+          <a href="rib.html">
+            <i class="fas fa-file-alt"></i>
+            <span>RIB</span>
+          </a>
+        </li>
+        <div class="indicator"></div>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Navigation active state
+    const lists = document.querySelectorAll('.navigation .list');
+    lists.forEach((list, index) => {
+      list.addEventListener('click', function() {
+        lists.forEach(item => item.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>

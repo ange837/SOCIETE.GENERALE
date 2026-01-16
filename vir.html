@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Virement Bancaire</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.lordicon.com/lordicon.js"></script>
+  <style>
+/* ================= RESET ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background: #f2f2f2;
+  color: #111;
+  padding-bottom: 130px;
+}
+
+/* ================= GENERIC ================= */
+.back_white {
+  background: #fff;
+}
+
+/* ================= HEADER ================= */
+.welcome {
+  text-align: center;
+  padding: 12px 16px 6px;
+}
+
+.welcome h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* ================= LOGOUT ================= */
+.logout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.logout a {
+  color: #e60028;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* ================= CONTAINER ================= */
+.container {
+  background: #fff;
+  max-width: 420px;
+  margin: 12px auto;
+  padding: 16px;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+/* ================= FOOTER CARD ================= */
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.gest_pic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text_footer h5 {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.text_footer sub {
+  font-size: 12px;
+  color: #555;
+}
+
+/* ================= TITRES ================= */
+.title_virement h1 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+/* ================= FORM INPUTS ================= */
+.inputBox {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.input_field {
+  width: 100%;
+  padding: 14px 12px;
+  border-radius: 10px;
+  border: 1.5px solid #ccc;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.inputBox span {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #666;
+  pointer-events: none;
+  transition: 0.25s ease;
+  background: #fff;
+  padding: 0 6px;
+}
+
+.input_field:focus + span,
+.input_field:not(:placeholder-shown) + span {
+  top: -6px;
+  font-size: 11px;
+  color: #e60028;
+}
+
+.input_valid {
+  border-color: #138a3d;
+}
+
+.input_invalid {
+  border-color: #e60028;
+}
+
+.error {
+  font-size: 11px;
+  color: #e60028;
+  margin-top: 4px;
+  display: block;
+}
+
+/* ================= BUTTON ================= */
+.button {
+  margin-top: 12px;
+}
+
+.btn_valid {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: rgb(211, 209, 230);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: not-allowed;
+  transition: background 0.3s ease;
+}
+
+.btn_valid:not(:disabled) {
+  background: slateblue;
+  cursor: pointer;
+}
+
+/* ================= LOADER ================= */
+.loader {
+  display: none;
+  width: 38px;
+  height: 38px;
+  border: 4px solid #eee;
+  border-top: 4px solid #e60028;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 16px auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ================= ALERT ================= */
+#alert_blocked {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  z-index: 2000;
+  line-height: 1.6;
+}
+
+/* ================= NAVIGATION BAR ================= */
+.navigation_bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #111;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 10px 0;
+  z-index: 1000;
+}
+
+.navigation {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.navigation ul {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+
+.navigation .list {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+.navigation .list a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  color: #aaa;
+  font-size: 11px;
+  transition: color 0.25s ease;
+  padding: 8px 0;
+}
+
+.navigation .list i {
+  font-size: 24px;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.navigation .list span {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.navigation .list.active a {
+  color: #e60028;
+}
+
+.navigation .list.active i {
+  color: #e60028;
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* INDICATOR */
+.indicator {
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 20%;
+  height: 3px;
+  background: #e60028;
+  border-radius: 10px;
+  transition: left 0.35s cubic-bezier(.4,0,.2,1);
+}
+
+.navigation .list:nth-child(1).active ~ .indicator {
+  left: 0;
+}
+
+.navigation .list:nth-child(2).active ~ .indicator {
+  left: 20%;
+}
+
+.navigation .list:nth-child(3).active ~ .indicator {
+  left: 40%;
+}
+
+.navigation .list:nth-child(4).active ~ .indicator {
+  left: 60%;
+}
+
+.navigation .list:nth-child(5).active ~ .indicator {
+  left: 80%;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 400px) {
+  .container {
+    padding: 14px 12px;
+  }
+
+  .navigation .list span {
+    font-size: 10px;
+  }
+  
+  .navigation .list i {
+    font-size: 22px;
+  }
+}
+  </style>
+</head>
+<body>
+  <div class="welcome">
+    <h4>Effectuer un virement</h4>
+    <div class="logout">
+      <i class="fas fa-power-off" style="color: red;"></i>
+      <a href="index.html">Déconnexion</a>
+    </div>
+  </div>
+
+  <div class="container back_white footer">
+    <div class="gest_pic">
+      <lord-icon
+        src="https://cdn.lordicon.com/pimvysaa.json"
+        trigger="loop"
+        colors="outline:#eeca66,primary:#b26836,secondary:#ffc738"
+        style="width: 60px; height: 60px">
+      </lord-icon>
+    </div>
+    <div class="text_footer">
+      <h5>Prélèvement: Compte courants</h5>
+      <sub>Solde: 530.000 €</sub>
+    </div>
+  </div>
+
+  <div class="container back_white transfert">
+    <div class="title_virement">
+      <h1>Informations du bénéficiaire</h1>
+    </div>
+
+    <div class="inputBox">
+      <input type="text" class="input_field" data-type="text" onkeyup="validateField(this)" placeholder=" " required>
+      <span>NOM</span>
+      <small class="error"></small>
+    </div>
+
+    <div class="inputBox">
+      <input type="text" class="input_field" data-type="text" onkeyup="validateField(this)" placeholder=" " required>
+      <span>PRÉNOM</span>
+      <small class="error"></small>
+    </div>
+
+    <div class="inputBox">
+      <input type="text" class="input_field" data-type="iban" onkeyup="validateField(this)" placeholder=" " required>
+      <span>IBAN</span>
+      <small class="error"></small>
+    </div>
+
+    <div class="inputBox">
+      <input type="text" class="input_field" data-type="swift" onkeyup="validateField(this)" placeholder=" " required>
+      <span>CODE SWIFT</span>
+      <small class="error"></small>
+    </div>
+
+    <div class="inputBox">
+      <input type="text" class="input_field" data-type="swift" onkeyup="validateField(this)" placeholder=" " required>
+      <span>CODE BIC</span>
+      <small class="error"></small>
+    </div>
+
+    <div class="inputBox">
+      <input type="text" class="input_field" data-type="amount" onkeyup="validateField(this)" placeholder=" " required>
+      <span>MONTANT</span>
+      <small class="error"></small>
+    </div>
+
+    <div class="inputBox">
+      <input type="text" class="input_field" data-type="text" onkeyup="validateField(this)" placeholder=" " required>
+      <span>LIBELLÉ</span>
+      <small class="error"></small>
+    </div>
+
+    <div class="loader" id="loader"></div>
+
+    <div class="button">
+      <button id="btn_valid" disabled onclick="virement_loading()" class="btn_valid">VALIDER</button>
+    </div>
+  </div>
+
+  <div class="navigation_bar">
+    <div class="navigation">
+      <ul>
+        <li class="list">
+          <a href="inter.html">
+            <i class="fas fa-wallet"></i>
+            <span>Solde</span>
+          </a>
+        </li>
+        <li class="list">
+          <a href="histo.html">
+            <i class="fas fa-clock"></i>
+            <span>Historique</span>
+          </a>
+        </li>
+        <li class="list active">
+          <a href="vir.html">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Virement</span>
+          </a>
+        </li>
+        <li class="list">
+          <a href="cart.html">
+            <i class="fas fa-credit-card"></i>
+            <span>Cartes</span>
+          </a>
+        </li>
+        <li class="list">
+          <a href="rib.html">
+            <i class="fas fa-file-alt"></i>
+            <span>RIB</span>
+          </a>
+        </li>
+        <div class="indicator"></div>
+      </ul>
+    </div>
+  </div>
+
+  <div id="alert_blocked">
+    ⚠️ Votre compte est temporairement bloqué.<br><br>
+    Veuillez contacter votre gestionnaire pour débloquer la situation.
+  </div>
+
+  <script>
+function formatIBAN(input) {
+  let value = input.value.replace(/\s+/g, "").toUpperCase();
+  value = value.replace(/(.{4})/g, "$1 ").trim();
+  input.value = value;
+}
+
+function formatAmount(input) {
+  let value = input.value.replace(/[^0-9,.]/g, "");
+  value = value.replace(",", "."); 
+  if (!isNaN(value) && value !== "") {
+    value = parseFloat(value).toLocaleString("fr-FR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
+  input.value = value;
+}
+
+function validateField(input) {
+  const type = input.dataset.type;
+  const rawValue = input.value.trim().replace(/\s+/g, "");
+  const error = input.parentElement.querySelector(".error");
+
+  let valid = false;
+  let message = "";
+
+  if (type === "iban") formatIBAN(input);
+  if (type === "amount") formatAmount(input);
+
+  switch (type) {
+    case "text":
+      valid = /^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]{2,}$/.test(rawValue);
+      message = valid ? "" : "Champ invalide";
+      break;
+
+    case "iban":
+      valid = /^[A-Z0-9]{15,34}$/i.test(rawValue);
+      message = valid ? "" : "IBAN incorrect";
+      break;
+
+    case "swift":
+      valid = /^[A-Z0-9]{8,11}$/i.test(rawValue);
+      message = valid ? "" : "Code SWIFT/BIC invalide";
+      break;
+
+    case "amount":
+      valid = /^[0-9]+(\.[0-9]{1,2})?$/.test(rawValue.replace(",", "."));
+      message = valid ? "" : "Montant incorrect";
+      break;
+  }
+
+  if (!valid) {
+    input.classList.add("input_invalid");
+    input.classList.remove("input_valid");
+    error.textContent = message;
+  } else {
+    input.classList.remove("input_invalid");
+    input.classList.add("input_valid");
+    error.textContent = "";
+  }
+
+  checkForm();
+}
+
+function checkForm() {
+  const inputs = document.querySelectorAll(".input_field");
+  const btn = document.getElementById("btn_valid");
+
+  const allValid = Array.from(inputs).every(el =>
+    el.classList.contains("input_valid")
+  );
+
+  btn.disabled = !allValid;
+}
+
+function virement_loading() {
+  const btn = document.getElementById("btn_valid");
+  const loader = document.getElementById("loader");
+
+  btn.style.display = "none";
+  loader.style.display = "block";
+
+  setTimeout(() => {
+    showAccountBlockedMessage();
+    loader.style.display = "none";
+  }, 2000);
+}
+
+function showAccountBlockedMessage() {
+  const alertBox = document.getElementById("alert_blocked");
+  alertBox.style.display = "flex";
+}
+
+// Navigation active state
+const lists = document.querySelectorAll('.navigation .list');
+lists.forEach((list, index) => {
+  list.addEventListener('click', function() {
+    lists.forEach(item => item.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+  </script>
+</body>
+</html>

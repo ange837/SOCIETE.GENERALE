@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Espace Client – Banque en ligne</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"/>
+  
+  <style>
+/* ================= RESET ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background: #f2f2f2;
+  color: #111;
+  padding-bottom: 130px;
+}
+
+/* ================= HEADER ================= */
+.welcome {
+  text-align: center;
+  padding: 12px 16px 6px;
+}
+
+.welcome h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* ================= LOGOUT ================= */
+.logout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  margin-bottom: 12px;
+}
+
+.logout i {
+  color: #e60028;
+  font-size: 14px;
+}
+
+.logout a {
+  color: #e60028;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* ================= CONTAINER ================= */
+.container {
+  background: #fff;
+  max-width: 420px;
+  margin: 12px auto;
+  padding: 16px;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.container h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.container h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.container h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.container hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 12px 0;
+}
+
+/* ================= USER INFO ================= */
+.country {
+  font-size: 13px;
+  color: #666;
+  margin: 6px 0;
+}
+
+.country i {
+  color: #e60028;
+  margin-right: 4px;
+}
+
+.lastest {
+  font-size: 12px;
+  color: #888;
+  margin: 8px 0;
+}
+
+.gestionnaire {
+  font-size: 13px;
+  margin: 8px 0;
+}
+
+.gestionnaire span {
+  font-weight: 600;
+  color: #e60028;
+}
+
+.container > p {
+  font-size: 13px;
+  margin: 10px 0;
+}
+
+/* ================= STATUS ================= */
+.blocked {
+  color: #e60028;
+  font-weight: 600;
+}
+
+.blink {
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ================= SOLDE ================= */
+.solde {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+.solde h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.green {
+  color: #138a3d;
+  font-weight: 600;
+}
+
+.red {
+  color: #e60028;
+  font-weight: 600;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.gray {
+  color: #666;
+  font-weight: 500;
+}
+
+marquee {
+  margin-top: 8px;
+}
+
+.deblocage {
+  font-size: 13px;
+  padding: 8px;
+  background: #fff3cd;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* ================= BAND ================= */
+.band {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+.band .text h3:first-child {
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.band .text h3:last-child {
+  font-size: 16px;
+  color: #138a3d;
+}
+
+.band .icon {
+  font-size: 20px;
+  color: #e60028;
+}
+
+/* ================= INFO COMPTES ================= */
+.info_comptes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+.info_comptes .text p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.info_comptes .montant {
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: 12px;
+}
+
+/* ================= CHART ================= */
+#stats {
+  padding: 16px;
+}
+
+#expensesChart {
+  margin-top: 12px;
+}
+
+/* ================= NAVIGATION BAR ================= */
+.navigation_bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #111;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 10px 0;
+  z-index: 1000;
+}
+
+.navigation {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.navigation ul {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+
+.navigation .list {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+.navigation .list a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  color: #aaa;
+  font-size: 11px;
+  transition: color 0.25s ease;
+  padding: 8px 0;
+}
+
+.navigation .list i {
+  font-size: 24px;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.navigation .list span {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.navigation .list.active a {
+  color: #e60028;
+}
+
+.navigation .list.active i {
+  color: #e60028;
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* INDICATOR */
+.indicator {
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 20%;
+  height: 3px;
+  background: #e60028;
+  border-radius: 10px;
+  transition: left 0.35s cubic-bezier(.4,0,.2,1);
+}
+
+.navigation .list:nth-child(1).active ~ .indicator {
+  left: 0;
+}
+
+.navigation .list:nth-child(2).active ~ .indicator {
+  left: 20%;
+}
+
+.navigation .list:nth-child(3).active ~ .indicator {
+  left: 40%;
+}
+
+.navigation .list:nth-child(4).active ~ .indicator {
+  left: 60%;
+}
+
+.navigation .list:nth-child(5).active ~ .indicator {
+  left: 80%;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 400px) {
+  .container {
+    padding: 14px 12px;
+  }
+
+  .navigation .list span {
+    font-size: 10px;
+  }
+  
+  .navigation .list i {
+    font-size: 22px;
+  }
+}
+  </style>
+</head>
+
+<body>
+
+  <!-- LOGO GÉNÉRIQUE -->
+  <div style="text-align: center; margin-top: 12px;">
+    <img src="2400x2400.png" alt="Société Générale Logo" height="80">
+  </div>
+
+  <div class="welcome">
+    <h4>Bienvenue dans votre espace client</h4>
+  </div>
+
+  <div class="logout">
+    <i class="fas fa-power-off"></i>
+    <a href="index.html">Déconnexion</a>
+  </div>
+
+  <div class="container">
+    <h2>M. CAMILLE WEEMANS</h2>
+    <div class="country">
+      <i class="fas fa-map-marker-alt"></i> Brussels – Belgium
+    </div>
+    <div class="lastest">Dernière connexion : <span id="timenow"></span></div>
+    <hr />
+    <div class="gestionnaire">
+      Votre conseiller : <span>M. Martin Greenberg</span>
+    </div>
+    <p>
+      Statut du compte :
+      <span class="blink blocked">Compte temporairement restreint</span>
+    </p>
+
+    <div class="solde">
+      <h3>Solde disponible : <span class="green">2 000 000 €</span></h3>
+      <marquee>
+        <p class="deblocage">
+          Frais de régularisation :
+          <span class="red bold">1 700 €</span>
+        </p>
+      </marquee>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2>Mes comptes</h2>
+    <div class="band">
+      <div class="text">
+        <h3 class="gray">Compte courant N******0254</h3>
+        <h3>10 754,25 €</h3>
+      </div>
+      <div class="icon">
+        <i class="fas fa-eye"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h4>Cartes & comptes</h4>
+    <div class="info_comptes">
+      <div class="text">
+        <p>**** **** 2284</p>
+        <p>M. CAMILLE WEEMANS</p>
+      </div>
+      <div class="montant green">+ 530 000 €</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h4>Crédits</h4>
+    <div class="info_comptes">
+      <div class="text"><p>Crédit automobile</p></div>
+      <div class="montant red">- 1 000 €</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h4>Épargne & placements</h4>
+    <div class="info_comptes">
+      <div class="text">
+        <p>**** **** 5462</p>
+        <p>Livret épargne</p>
+        <p>M. CAMILLE WEEMANS</p>
+      </div>
+      <div class="montant green">+ 10 000 €</div>
+    </div>
+  </div>
+
+  <div class="container" id="stats">
+    <h4><i class="fas fa-chart-line"></i> Activité mensuelle</h4>
+    <canvas id="expensesChart" height="100"></canvas>
+  </div>
+
+  <!-- NAVIGATION -->
+  <div class="navigation_bar">
+    <div class="navigation">
+      <ul>
+        <li class="list active">
+          <a href="inter.html">
+            <i class="fas fa-wallet"></i>
+            <span>Solde</span>
+          </a>
+        </li>
+        <li class="list">
+          <a href="histo.html">
+            <i class="fas fa-clock"></i>
+            <span>Historique</span>
+          </a>
+        </li>
+        <li class="list">
+          <a href="vir.html">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Virement</span>
+          </a>
+        </li>
+        <li class="list">
+          <a href="cart.html">
+            <i class="fas fa-credit-card"></i>
+            <span>Cartes</span>
+          </a>
+        </li>
+        <li class="list">
+          <a href="rib.html">
+            <i class="fas fa-file-alt"></i>
+            <span>RIB</span>
+          </a>
+        </li>
+        <div class="indicator"></div>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const now = new Date();
+      document.getElementById("timenow").textContent =
+        now.toLocaleDateString('fr-FR');
+
+      new Chart(document.getElementById('expensesChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai'],
+          datasets: [{
+            data: [850, 920, 740, 990, 880],
+            backgroundColor: '#e60028',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+
+      Swal.fire({
+        title: '⚠️ Compte bloqué',
+        html:'<b>Votre compte est actuellement bloqué.</b><br><br>Veuillez régulariser la situation auprès de votre gestionnaire pour rétablir l\'accès complet.',
+        icon: 'warning',
+        confirmButtonText: 'Contacter mon gestionnaire',
+        confirmButtonColor: '#e60028'
+      });
+    });
+
+    // Navigation active state
+    const lists = document.querySelectorAll('.navigation .list');
+    lists.forEach((list, index) => {
+      list.addEventListener('click', function() {
+        lists.forEach(item => item.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>
