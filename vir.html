@@ -867,16 +867,20 @@ contactForm.addEventListener('submit', function(e) {
   sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
   
   setTimeout(() => {
+    // Cacher le formulaire et afficher le message de succès
+    contactForm.style.display = 'none';
     successMessage.classList.add('show');
-    contactForm.reset();
-    sendBtn.disabled = false;
-    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer au gestionnaire';
     
-    // Fermer la modal après 3 secondes
+    // Fermer la modal après 4 secondes
     setTimeout(() => {
       closeModal();
       successMessage.classList.remove('show');
-    }, 3000);
+      contactForm.style.display = 'block';
+      contactForm.reset();
+    }, 4000);
+    
+    sendBtn.disabled = false;
+    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer au gestionnaire';
     
     console.log('Email envoyé à:', email);
     console.log('Message:', message);
@@ -885,3 +889,4 @@ contactForm.addEventListener('submit', function(e) {
   </script>
 </body>
 </html>
+
