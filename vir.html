@@ -185,21 +185,213 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* ================= ALERT ================= */
-#alert_blocked {
+/* ================= MODAL OVERLAY ================= */
+.modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.85);
   display: none;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  padding: 20px;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 500;
   z-index: 2000;
-  line-height: 1.6;
+  padding: 20px;
+}
+
+.modal-overlay.show {
+  display: flex;
+}
+
+/* ================= MODAL CONTENT ================= */
+.modal-content {
+  background: #fff;
+  max-width: 420px;
+  width: 100%;
+  border-radius: 16px;
+  padding: 24px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e60028;
+}
+
+.modal-header h2 {
+  font-size: 18px;
+  color: #e60028;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: #f0f0f0;
+  color: #e60028;
+}
+
+/* ================= ALERT BOX ================= */
+.alert-box {
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 14px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #856404;
+  line-height: 1.5;
+}
+
+.alert-box i {
+  color: #ffc107;
+  margin-right: 8px;
+}
+
+/* ================= CONTACT FORM ================= */
+.input-group {
+  margin-bottom: 16px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.input-group input,
+.input-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border 0.3s ease;
+  outline: none;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+  border-color: #e60028;
+}
+
+.input-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.input-group input.error-input,
+.input-group textarea.error-input {
+  border-color: #e60028;
+}
+
+.error-msg {
+  color: #e60028;
+  font-size: 12px;
+  margin-top: 4px;
+  display: none;
+}
+
+.error-msg.show {
+  display: block;
+}
+
+.btn-send {
+  width: 100%;
+  padding: 14px;
+  background: #e60028;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-send:hover {
+  background: #c00020;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(230,0,40,0.3);
+}
+
+.btn-send:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ================= SUCCESS MESSAGE ================= */
+.success-message {
+  display: none;
+  background: #d4edda;
+  border-left: 4px solid #28a745;
+  padding: 16px;
+  border-radius: 6px;
+  margin-top: 16px;
+  color: #155724;
+  line-height: 1.5;
+}
+
+.success-message i {
+  color: #28a745;
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+.success-message.show {
+  display: block;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ================= NAVIGATION BAR ================= */
@@ -300,7 +492,7 @@ body {
 
 /* ================= RESPONSIVE ================= */
 @media (max-width: 400px) {
-  .container {
+  .container, .modal-content {
     padding: 14px 12px;
   }
 
@@ -430,9 +622,67 @@ body {
     </div>
   </div>
 
-  <div id="alert_blocked">
-    ⚠️ Votre compte est temporairement bloqué.<br><br>
-    Veuillez contacter votre gestionnaire pour débloquer la situation.
+  <!-- MODAL AVEC FORMULAIRE DE CONTACT -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-exclamation-triangle"></i> Compte bloqué</h2>
+        <button class="close-btn" onclick="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="alert-box">
+        <i class="fas fa-lock"></i>
+        <strong>Votre compte est temporairement bloqué.</strong><br>
+        Contactez votre gestionnaire pour débloquer la situation et effectuer vos virements.
+      </div>
+
+      <form id="contactForm">
+        <div class="input-group">
+          <label for="email">Votre adresse email</label>
+          <input 
+            type="email" 
+            id="email" 
+            placeholder="exemple@email.com" 
+            required
+          />
+          <span class="error-msg" id="emailError">Veuillez entrer une adresse email valide</span>
+        </div>
+
+        <div class="input-group">
+          <label for="subject">Objet</label>
+          <input 
+            type="text" 
+            id="subject" 
+            value="Demande urgente de déblocage de compte" 
+            readonly
+            style="background: #f8f9fa;"
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="message">Votre message</label>
+          <textarea 
+            id="message" 
+            placeholder="Expliquez votre situation au gestionnaire..."
+            required
+          ></textarea>
+          <span class="error-msg" id="messageError">Le message ne peut pas être vide</span>
+        </div>
+
+        <button type="submit" class="btn-send" id="sendBtn">
+          <i class="fas fa-paper-plane"></i>
+          Envoyer au gestionnaire
+        </button>
+      </form>
+
+      <div class="success-message" id="successMessage">
+        <i class="fas fa-check-circle"></i>
+        <strong>Message envoyé avec succès !</strong><br>
+        Votre gestionnaire M. Martin Greenberg vous contactera sous 24-48h pour débloquer votre compte.
+      </div>
+    </div>
   </div>
 
   <script>
@@ -519,23 +769,118 @@ function virement_loading() {
   loader.style.display = "block";
 
   setTimeout(() => {
-    showAccountBlockedMessage();
     loader.style.display = "none";
+    btn.style.display = "block";
+    showModal();
   }, 2000);
 }
 
-function showAccountBlockedMessage() {
-  const alertBox = document.getElementById("alert_blocked");
-  alertBox.style.display = "flex";
+function showModal() {
+  document.getElementById("modalOverlay").classList.add("show");
+  document.body.style.overflow = "hidden";
 }
+
+function closeModal() {
+  document.getElementById("modalOverlay").classList.remove("show");
+  document.body.style.overflow = "auto";
+}
+
+// Fermer la modal en cliquant en dehors
+document.getElementById("modalOverlay").addEventListener("click", function(e) {
+  if (e.target === this) {
+    closeModal();
+  }
+});
 
 // Navigation active state
 const lists = document.querySelectorAll('.navigation .list');
-lists.forEach((list, index) => {
+lists.forEach((list) => {
   list.addEventListener('click', function() {
     lists.forEach(item => item.classList.remove('active'));
     this.classList.add('active');
   });
+});
+
+// FORMULAIRE DE CONTACT
+const contactForm = document.getElementById('contactForm');
+const emailInput = document.getElementById('email');
+const messageInput = document.getElementById('message');
+const sendBtn = document.getElementById('sendBtn');
+const successMessage = document.getElementById('successMessage');
+
+// Validation email
+emailInput.addEventListener('input', function() {
+  const emailError = document.getElementById('emailError');
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+  if (this.value.trim() === '') {
+    this.classList.remove('error-input');
+    emailError.classList.remove('show');
+  } else if (!emailRegex.test(this.value)) {
+    this.classList.add('error-input');
+    emailError.classList.add('show');
+  } else {
+    this.classList.remove('error-input');
+    emailError.classList.remove('show');
+  }
+});
+
+// Validation message
+messageInput.addEventListener('input', function() {
+  const messageError = document.getElementById('messageError');
+  
+  if (this.value.trim() === '') {
+    this.classList.add('error-input');
+    messageError.classList.add('show');
+  } else {
+    this.classList.remove('error-input');
+    messageError.classList.remove('show');
+  }
+});
+
+// Soumission du formulaire
+contactForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const email = emailInput.value.trim();
+  const message = messageInput.value.trim();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+  let isValid = true;
+  
+  if (!emailRegex.test(email)) {
+    emailInput.classList.add('error-input');
+    document.getElementById('emailError').classList.add('show');
+    isValid = false;
+  }
+  
+  if (message === '') {
+    messageInput.classList.add('error-input');
+    document.getElementById('messageError').classList.add('show');
+    isValid = false;
+  }
+  
+  if (!isValid) return;
+  
+  // Simulation d'envoi
+  sendBtn.disabled = true;
+  sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+  
+  setTimeout(() => {
+    successMessage.classList.add('show');
+    contactForm.reset();
+    sendBtn.disabled = false;
+    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer au gestionnaire';
+    
+    // Fermer la modal après 3 secondes
+    setTimeout(() => {
+      closeModal();
+      successMessage.classList.remove('show');
+    }, 3000);
+    
+    console.log('Email envoyé à:', email);
+    console.log('Message:', message);
+  }, 2000);
 });
   </script>
 </body>
