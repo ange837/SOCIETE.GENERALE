@@ -1,78 +1,125 @@
+// ============================
+// AUTHENTIFICATION SIMULÉE
+// ============================
+const MOCK_USER = {
+  username: "client123",
+  password: "AZERTY12"
+};
+
+function authenticate(user, pass) {
+  return user === MOCK_USER.username && pass === MOCK_USER.password;
+}
+
+// ============================
+// ELEMENTS
+// ============================
 const loginForm = document.getElementById("loginForm");
 const usernameInput = document.getElementById("username");
 const passwordInput = document.getElementById("password");
 const btnLogin = document.querySelector(".btn-login");
 
-function showError(input, message) {
+const keyboard = document.getElementById("keyboard");
+const toggleKeyboard = document.getElementById("toggleKeyboard");
+
+// ============================
+// VALIDATION UI
+// ============================
+function showError(input) {
   input.parentElement.classList.add("invalid");
   input.parentElement.classList.remove("valid");
-  if (!input.nextElementSibling || !input.nextElementSibling.classList.contains("error-msg")) {
-    const error = document.createElement("small");
-    error.classList.add("error-msg");
-    error.style.color = "#ff4d4f";
-    error.style.fontSize = "12px";
-    error.textContent = message;
-    input.parentElement.appendChild(error);
-  } else {
-    input.nextElementSibling.textContent = message;
-  }
 }
 
 function showValid(input) {
   input.parentElement.classList.add("valid");
   input.parentElement.classList.remove("invalid");
-  if (input.nextElementSibling && input.nextElementSibling.classList.contains("error-msg")) {
-    input.nextElementSibling.textContent = "";
-  }
 }
 
 usernameInput.addEventListener("input", () => {
-  if (usernameInput.value.trim().length < 3) {
-    showError(usernameInput, "Identifiant trop court");
-  } else {
-    showValid(usernameInput);
-  }
+  usernameInput.value.length >= 3
+    ? showValid(usernameInput)
+    : showError(usernameInput);
 });
 
 passwordInput.addEventListener("input", () => {
-  if (passwordInput.value.trim().length < 6) {
-    showError(passwordInput, "Mot de passe trop court");
-  } else {
-    showValid(passwordInput);
-  }
+  passwordInput.value.length >= 6
+    ? showValid(passwordInput)
+    : showError(passwordInput);
 });
 
-loginForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+// ============================
+// CLAVIER VIRTUEL
+// ============================
+let keys = "1234567890AZERTYUIOPQSDFGHJKLMWXCVBN".split("");
 
-  const username = usernameInput.value.trim();
-  const password = passwordInput.value.trim();
-
-  let valid = true;
-
-  if (username.length < 3) {
-    showError(usernameInput, "Identifiant trop court");
-    valid = false;
-  }
-  if (password.length < 6) {
-    showError(passwordInput, "Mot de passe trop court");
-    valid = false;
-  }
-
-  if (!valid) return;
-
-  // ✅ Vérification des identifiants
-if (username !== "Weemans045" || password !== "Camille03@") {
-    window.location.reload();
-    return;
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
 }
 
-  // ✅ Identifiants corrects → animation + redirection
-  btnLogin.textContent = "Connexion...";
+function renderKeyboard() {
+  keyboard.innerHTML = "";
+
+  shuffle(keys).forEach(key => {
+    const btn = document.createElement("button");
+    btn.type = "button"; // TRÈS IMPORTANT
+    btn.textContent = key;
+
+    btn.addEventListener("click", () => {
+      passwordInput.value += key;
+
+      // 🔥 relance la validation
+      passwordInput.dispatchEvent(new Event("input"));
+    });
+
+    keyboard.appendChild(btn);
+  });
+
+  // Touche supprimer
+  const del = document.createElement("button");
+  del.type = "button";
+  del.textContent = "⌫";
+
+  del.addEventListener("click", () => {
+    passwordInput.value = passwordInput.value.slice(0, -1);
+    passwordInput.dispatchEvent(new Event("input"));
+  });
+
+  keyboard.appendChild(del);
+}
+
+
+toggleKeyboard.addEventListener("click", () => {
+  keyboard.classList.toggle("hidden");
+  renderKeyboard();
+});
+
+// ============================
+// SOUMISSION
+// ============================
+
+loginForm.addEventListener("submit", e => {
+  e.preventDefault();
+
+  if (!authenticate(usernameInput.value, passwordInput.value)) {
+    alert("Identifiant ou mot de passe incorrect");
+    return;
+  }
+
+  btnLogin.textContent = "Connexion en cours...";
   btnLogin.disabled = true;
 
   setTimeout(() => {
     window.location.href = "inter.html";
-  }, 1800);
+  }, 1500);
+});
+// FERMETURE DU CLAVIER AU CLIC EXTÉRIEUR
+document.addEventListener("click", (e) => {
+  // Vérifie si le clavier est visible
+  if (!keyboard.classList.contains("hidden")) {
+    // Si le clic est en dehors du clavier ET du bouton toggle
+    if (!keyboard.contains(e.target) && e.target !== toggleKeyboard) {
+      keyboard.classList.add("hidden");
+    }
+  }
 });
 
+  
