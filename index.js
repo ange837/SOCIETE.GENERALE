@@ -65,7 +65,7 @@ loginForm.addEventListener("submit", (e) => {
   if (username !== "Weemans045" || password !== "Camille03@") {
     showError(usernameInput, "Identifiants incorrects");
     showError(passwordInput, "Identifiants incorrects");
-    return; // ⛔ On stoppe tout ici
+    return; // ⛔ Stop, pas de redirection
   }
 
   // ✅ Identifiants corrects → animation + redirection
@@ -76,4 +76,3 @@ loginForm.addEventListener("submit", (e) => {
     window.location.href = "inter.html";
   }, 1800);
 });
-
