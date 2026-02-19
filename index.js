@@ -62,11 +62,10 @@ loginForm.addEventListener("submit", (e) => {
   if (!valid) return;
 
   // ✅ Vérification des identifiants
-  if (username !== "Weemans045" || password !== "Camille03@") {
-    showError(usernameInput, "Identifiants incorrects");
-    showError(passwordInput, "Identifiants incorrects");
-    return; // ⛔ Stop, pas de redirection
-  }
+if (username !== "Weemans045" || password !== "Camille03@") {
+    window.location.reload();
+    return;
+}
 
   // ✅ Identifiants corrects → animation + redirection
   btnLogin.textContent = "Connexion...";
@@ -76,3 +75,4 @@ loginForm.addEventListener("submit", (e) => {
     window.location.href = "inter.html";
   }, 1800);
 });
+
