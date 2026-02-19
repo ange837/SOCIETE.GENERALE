@@ -11,11 +11,12 @@ document.getElementById("loginForm").addEventListener("submit", function(e) {
     button.disabled = true;
 
     setTimeout(() => {
-      window.location.href = "inter.html"; // ✅ bonne page
+      window.location.href = "/inter.html"; // ✅ bonne page
     }, 1800);
   } else {
     alert("Identifiants incorrects.");
   }
 });
   
+
 
