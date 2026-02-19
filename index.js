@@ -18,9 +18,10 @@ document.getElementById("loginForm").addEventListener("submit", function(e) {
   button.disabled = true;
 
   setTimeout(() => {
-    window.location.href = "index.html"; // ou dashboard, page comptes etc.
+    window.location.href = "inter.html"; // ou dashboard, page comptes etc.
   }, 1800);
 });
+
 
 
 
